@@ -1,6 +1,6 @@
 # HarborTide
 
-Project group for CompII.
+Project group for Comp II.
 
 Weblinks to resources:
 
