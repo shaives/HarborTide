@@ -47,8 +47,9 @@
 
 # import statements first
 
-# main routine
-if __name__ == '__main__':
+
+
+def main():
 
     """
     Starts the programm.
@@ -59,5 +60,16 @@ if __name__ == '__main__':
             Returns:
                         Hello World!
     """
-    
+
     print(f"Hello World!")
+
+
+# main routine
+if __name__ == '__main__':
+
+    """
+    Starts the programm.
+
+    """
+    
+    main()
