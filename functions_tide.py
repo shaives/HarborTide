@@ -58,6 +58,22 @@ def data_import_bases(stats = ["Alaska", "Alabama", "Arkansas", "American Samoa"
 
     return bases_df
 
+def data_import_tidel_sensors():
+
+    """
+    Returns the sum of two decimal numbers in binary digits.
+
+            Parameters:
+                        a (int): A decimal integer
+                        b (int): Another decimal integer
+
+            Returns:
+                        binary_sum (str): Binary string of the sum of a and b
+    """
+
+    
+
+    return tide_sensors, tide_data
 
 def create_map(data_df):
 
@@ -86,7 +102,7 @@ def create_map(data_df):
     marker_cluster = MarkerCluster(
         locations = coord_list,
         popups = popups,
-        name='US Bases & Tide-sensors',
+        name='US Bases',
         overlay=True,
         control=True
     )
