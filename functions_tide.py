@@ -11,6 +11,8 @@
 # import statements first
 
 import pandas as pd
+import os
+import gzip
 
 import folium
 from folium.plugins import MarkerCluster
@@ -58,8 +60,64 @@ def data_import_bases(stats = ["Alaska", "Alabama", "Arkansas", "American Samoa"
 
     return bases_df
 
+def data_import_tidel_sensors():
 
-def create_map(data_df):
+    """
+    Returns a dictonary with the information about the sensor and the data.
+
+            Parameters:
+                        None
+
+            Returns:
+                        sensors (dict): dictionary consisting out of:
+
+                            Info    (dict): Metadata of the Sensor
+
+                                e.g.
+                                NOS ID: 9410170
+                                Location Name: SAN DIEGO, SAN DIEGO BAY
+                                Latitude: 32.71419
+                                Longitude: -117.17358
+                                Horizontal Datum: WGS-84
+                                Operator: DOC>NOAA>NOS>CO-OPS
+                                Vertical Datum: Station Datum
+
+                            Data    (dict): Data the sensor collected
+
+    """
+
+    for file in os.listdir('./data/tide_sensors/.'):
+
+        sensors = dict()
+
+        with gzip.open('./data/tide_sensors/' + file, 'rt') as file_in:
+            
+            # Reading in header
+            sensor_information_file = file_in.readlines()[0:10]
+
+            sensor_information_dict = dict()
+
+            for line in sensor_information_file[:-3]:
+                
+                key, value = line.removeprefix('// ').split(':')
+                key = key.strip()
+                value = value.strip()
+
+                sensor_information_dict[key] = value
+
+            print(sensor_information_dict)
+
+            # Reading in data
+            csv_header = sensor_information_file[-1].removeprefix('// ').split(',')
+
+        sensor_data = pd.read_csv('./data/tide_sensors/' + file, skiprows=10, sep='\t', header=None)
+        sensor_data.columns = csv_header
+
+        sensors[sensor_information_dict.get('NOS ID')] = {'Info' : sensor_information_dict, 'Data' : sensor_data}
+
+    return sensors
+
+def create_map(bases_df, sensors_df):
 
     """
     Creates a map with folium.
@@ -79,14 +137,15 @@ def create_map(data_df):
     # Specify center location, and starting zoom level (0 to 18)
     map = folium.Map(location=[nps_lat, nps_lon], zoom_start = 4, control_scal = True, tiles = "Cartodb Positron")
 
-    coord_list = data_df.geoPoint
+    coord_list_bases = bases_df.geoPoint
+    cod_list_sensors = sensors_df
 
     popups = ['<b>Base:</b><br>{}<br><b>Altitude:</b><br>{}'.format(name, 'Null') for (name) in data_df.name.values]
 
     marker_cluster = MarkerCluster(
-        locations = coord_list,
+        locations = coord_list_bases,
         popups = popups,
-        name='US Bases & Tide-sensors',
+        name='US Bases',
         overlay=True,
         control=True
     )
