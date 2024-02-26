@@ -117,7 +117,7 @@ def data_import_tidel_sensors():
 
     return sensors
 
-def create_map(bases_df, sensors_df):
+def create_map(bases_df):
 
     """
     Creates a map with folium.
