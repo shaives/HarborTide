@@ -140,7 +140,7 @@ def create_map(bases_df, sensors_df):
     coord_list_bases = bases_df.geoPoint
     cod_list_sensors = sensors_df
 
-    popups = ['<b>Base:</b><br>{}<br><b>Altitude:</b><br>{}'.format(name, 'Null') for (name) in data_df.name.values]
+    popups = ['<b>Base:</b><br>{}<br><b>Altitude:</b><br>{}'.format(name, 'Null') for (name) in bases_df.name.values]
 
     marker_cluster = MarkerCluster(
         locations = coord_list_bases,
