@@ -85,39 +85,40 @@ def data_import_tidel_sensors():
                             Data    (dict): Data the sensor collected
 
     """
+    sensor_information_dict = dict()
 
     for file in os.listdir('./data/tide_sensors/.'):
-
-        sensors = dict()
 
         with gzip.open('./data/tide_sensors/' + file, 'rt') as file_in:
             
             # Reading in header
             sensor_information_file = file_in.readlines()[0:10]
 
-            sensor_information_dict = dict()
+        for line in sensor_information_file[:-4]:
+            
+            name, value = line.removeprefix('// ').strip().split(':')
 
-            for line in sensor_information_file[:-3]:
-                
-                key, value = line.removeprefix('// ').split(':')
-                key = key.strip()
-                value = value.strip()
+            if name in sensor_information_dict:
+                sensor_information_dict[name].append(value)
+            else :
+                sensor_information_dict[name] = [value]
 
-                sensor_information_dict[key] = value
+    sensor_information_df = pd.DataFrame(sensor_information_dict)
 
-            print(sensor_information_dict)
+    sensor_information_df = sensor_information_df.assign(geoPoint = list(zip(sensor_information_df.Latitude.astype('float64'), sensor_information_df.Longitude.astype('float64'))))
+    sensor_information_df.drop(columns = ['Latitude', 'Longitude'], inplace =  True)
 
             # Reading in data
-            csv_header = sensor_information_file[-1].removeprefix('// ').split(',')
+            # csv_header = sensor_information_file[-1].removeprefix('// ').split(',')
 
-        sensor_data = pd.read_csv('./data/tide_sensors/' + file, skiprows=10, sep='\t', header=None)
-        sensor_data.columns = csv_header
+        # sensor_data = pd.read_csv('./data/tide_sensors/' + file, skiprows=10, sep='\t', header=None)
+        # sensor_data.columns = csv_header
 
-        sensors[sensor_information_dict.get('NOS ID')] = {'Info' : sensor_information_dict, 'Data' : sensor_data}
+        # sensors_df[sensor_information_dict.get('NOS ID')] = {'Info' : sensor_information_dict, 'Data' : sensor_data}
 
-    return sensors
+    return sensor_information_df
 
-def create_map(bases_df):
+def create_map(bases_df, sensors_df):
 
     """
     Creates a map with folium.
@@ -138,19 +139,30 @@ def create_map(bases_df):
     map = folium.Map(location=[nps_lat, nps_lon], zoom_start = 4, control_scal = True, tiles = "Cartodb Positron")
 
     coord_list_bases = bases_df.geoPoint
-    
+    cod_list_sensors = sensors_df.geoPoint
 
-    popups = ['<b>Base:</b><br>{}<br><b>Altitude:</b><br>{}'.format(name, 'Null') for (name) in bases_df.name.values]
+    popups_bases = ['<b>Base:</b><br>{}<br><b>Altitude:</b><br>{}'.format(name, 'Null') for (name) in bases_df.name.values]
+    popups_sensors = ['<b>Name:</b><br>{}<br><b>City:</b><br>{}'.format(name, 'Null') for (name) in sensors_df['Location Name'].values]
 
-    marker_cluster = MarkerCluster(
+    marker_cluster_bases = MarkerCluster(
         locations = coord_list_bases,
-        popups = popups,
+        popups = popups_bases,
         name='US Bases',
+        color_column='green',
         overlay=True,
         control=True
     )
 
-    marker_cluster.add_to(map)
+    marker_cluster_sensors = MarkerCluster(
+        locations = cod_list_sensors,
+        popups = popups_sensors,
+        name='Tide Sensors',
+        overlay=True,
+        control=True
+    )
+
+    marker_cluster_bases.add_to(map)
+    marker_cluster_sensors.add_to(map)
 
     folium.LayerControl().add_to(map)
         
