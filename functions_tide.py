@@ -89,14 +89,21 @@ def data_import_tidel_sensors():
 
     """
     sensor_information_dict = dict()
+    csv_header = list()
+    sensor_data_df = pd.DataFrame()
 
-    for file in os.listdir('./data/tide_sensors/.'):
+    for idx, file in enumerate(os.listdir('./data/tide_sensors/.')):
 
         with gzip.open('./data/tide_sensors/' + file, 'rt') as file_in:
             
             # Reading in header
             sensor_information_file = file_in.readlines()[0:10]
 
+        if len(csv_header) == 0:
+            # Retrieving the header for csv
+            csv_header = sensor_information_file[-1].removeprefix('// ').split(',')
+
+        # Getting metadata for the sensor
         for line in sensor_information_file[:-4]:
             
             name, value = line.removeprefix('// ').strip().split(':')
@@ -106,20 +113,18 @@ def data_import_tidel_sensors():
             else :
                 sensor_information_dict[name] = [value]
 
+        sensor_data_df_temp = pd.read_csv('./data/tide_sensors/' + file, skiprows=10, sep='\t', header=None)
+        sensor_data_df_temp.columns = csv_header
+        sensor_data_df_temp['NOS ID'] = sensor_information_dict.get('NOS ID')[idx]
+        sensor_data_df = pd.concat([sensor_data_df, sensor_data_df_temp])
+
+    # Creating a df from the metadata
     sensor_information_df = pd.DataFrame(sensor_information_dict)
 
     sensor_information_df = sensor_information_df.assign(geoPoint = list(zip(sensor_information_df.Latitude.astype('float64'), sensor_information_df.Longitude.astype('float64'))))
     sensor_information_df.drop(columns = ['Latitude', 'Longitude'], inplace =  True)
 
-            # Reading in data
-            # csv_header = sensor_information_file[-1].removeprefix('// ').split(',')
-
-        # sensor_data = pd.read_csv('./data/tide_sensors/' + file, skiprows=10, sep='\t', header=None)
-        # sensor_data.columns = csv_header
-
-        # sensors_df[sensor_information_dict.get('NOS ID')] = {'Info' : sensor_information_dict, 'Data' : sensor_data}
-
-    return sensor_information_df
+    return sensor_information_df, sensor_data_df
 
 def create_map(bases_df, sensors_df):
 
