@@ -84,6 +84,9 @@ def data_import_tidel_sensors():
 
                             Data    (dict): Data the sensor collected
 
+            Source:
+                        https://www.ngdc.noaa.gov/hazard/tide/
+
     """
     sensor_information_dict = dict()
 
