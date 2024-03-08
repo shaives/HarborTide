@@ -113,9 +113,10 @@ def data_import_tidel_sensors():
             else :
                 sensor_information_dict[name] = [value]
 
-        sensor_data_df_temp = pd.read_csv('./data/tide_sensors/' + file, skiprows=10, sep='\t', header=None)
-        sensor_data_df_temp.columns = csv_header
+        sensor_data_df_temp = pd.read_csv('./data/tide_sensors/' + file, skiprows=10, sep='\t', header=None, usecols=[0,1])
+        sensor_data_df_temp.columns = csv_header[0:1]
         sensor_data_df_temp['NOS ID'] = sensor_information_dict.get('NOS ID')[idx]
+        sensor_data_df_temp['datetime [ISO8601]'] = pd.to_datetime(sensor_data_df_temp['datetime [ISO8601]'], format='ISO8601')
         sensor_data_df = pd.concat([sensor_data_df, sensor_data_df_temp])
 
     # Creating a df from the metadata
@@ -125,6 +126,24 @@ def data_import_tidel_sensors():
     sensor_information_df.drop(columns = ['Latitude', 'Longitude'], inplace =  True)
 
     return sensor_information_df, sensor_data_df
+
+
+def curate_tide_sensor_data(tide_sensor_df):
+
+    """
+    Curates the tide sonsor data.
+
+            Parameters:
+                        tide_sensor_df (DataFrame): Contains all read in tide sensors
+
+            Returns:
+                        curated_tide_sensor_df 
+    """
+
+    tide_sensor_df.groupby('NOS ID')
+
+
+    return None
 
 def create_map(bases_df, sensors_df):
 

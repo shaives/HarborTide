@@ -71,9 +71,11 @@ def main():
 
     bases_df = data_import_bases(west_coast)
 
-    tide_sensors, tide_sensor_data = data_import_tidel_sensors()
+    tide_sensors_df, tide_sensor_data_df = data_import_tidel_sensors()
 
-    create_map(bases_df, tide_sensors)
+    tide_sensor_data_cleaned_df = curate_tide_sensor_data(tide_sensor_data_df)
+
+    create_map(bases_df, tide_sensors_df)
 
 
 # main routine
