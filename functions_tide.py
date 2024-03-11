@@ -57,7 +57,6 @@ def data_import_bases(stats = ["Alaska", "Alabama", "Arkansas", "American Samoa"
     bases_df.drop(columns = ['lat', 'lon'], inplace =  True)
 
     # filter by list
-
     bases_df = bases_df[bases_df.state.isin(stats)]
 
     return bases_df
@@ -179,6 +178,18 @@ def curate_tide_sensor_data(tide_sensor_df):
         ax.plot(sensor_data['datetime'], sensor_data['min'], label='Min')
         ax.plot(sensor_data['datetime'], sensor_data['mean'], label='Mean')
         ax.plot(sensor_data['datetime'], sensor_data['max'], label='Max')
+
+        # Running average
+        sensor_data['ra_min'] = sensor_data['min'].rolling(window=12).mean()
+        sensor_data['ra_mean'] = sensor_data['mean'].rolling(window=12).mean()
+        sensor_data['ra_max'] = sensor_data['max'].rolling(window=12).mean()
+
+        # Plotting running average
+        ax.plot(sensor_data['datetime'], sensor_data['ra_min'], 'r', label='Running average min')
+        ax.plot(sensor_data['datetime'], sensor_data['ra_mean'], 'r', label='Running average mean')
+        ax.plot(sensor_data['datetime'], sensor_data['ra_max'], 'r', label='Running average max')
+
+        # Set labels and title
         ax.set_xlabel('Date')
         ax.set_ylabel('Water Level (m)')
         ax.set_title(f'Tide Sensor {sensor}')
@@ -212,12 +223,15 @@ def create_map(bases_df, sensors_df):
     # Specify center location, and starting zoom level (0 to 18)
     map = folium.Map(location=[nps_lat, nps_lon], zoom_start = 4, control_scal = True, tiles = "Cartodb Positron")
 
+    # Add a marker for Glasgow Hall
     coord_list_bases = bases_df.geoPoint
     cod_list_sensors = sensors_df.geoPoint
 
+    # Create popups
     popups_bases = ['<b>Base:</b><br>{}<br><b>Altitude:</b><br>{}'.format(name, 'Null') for (name) in bases_df.name.values]
     popups_sensors = ['<b>Name:</b><br>{}<br><b>City:</b><br>{}'.format(name, 'Null') for (name) in sensors_df['Location Name'].values]
 
+    # Create a MarkerCluster object for bases
     marker_cluster_bases = MarkerCluster(
         locations = coord_list_bases,
         popups = popups_bases,
@@ -227,6 +241,7 @@ def create_map(bases_df, sensors_df):
         control=True
     )
 
+    # Create a MarkerCluster object for sensors
     marker_cluster_sensors = MarkerCluster(
         locations = cod_list_sensors,
         popups = popups_sensors,
@@ -235,9 +250,11 @@ def create_map(bases_df, sensors_df):
         control=True
     )
 
+    # Add MarkerCluster to map
     marker_cluster_bases.add_to(map)
     marker_cluster_sensors.add_to(map)
 
     folium.LayerControl().add_to(map)
-        
+
+    # Save the map    
     map.save('horbourTide.html')
