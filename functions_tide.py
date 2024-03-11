@@ -159,30 +159,34 @@ def curate_tide_sensor_data(tide_sensor_df):
 
     for sensor in tide_sensors:
 
-        # Get the sensor data
-        sensor_data = curated_tide_sensor_mean_df[curated_tide_sensor_mean_df['NOS ID'] == sensor]
+    # Get the sensor data
+    sensor_data = curated_tide_sensor_mean_df[curated_tide_sensor_mean_df['NOS ID'] == sensor]
 
-        # Get the min and max
-        sensor_data_min = curated_tide_sensor_min_df[curated_tide_sensor_min_df['NOS ID'] == sensor]
-        sensor_data_max = curated_tide_sensor_max_df[curated_tide_sensor_max_df['NOS ID'] == sensor]
+    # Get the min and max
+    sensor_data_min = curated_tide_sensor_min_df[curated_tide_sensor_min_df['NOS ID'] == sensor]
+    sensor_data_max = curated_tide_sensor_max_df[curated_tide_sensor_max_df['NOS ID'] == sensor]
 
-        # Merge the data
-        sensor_data = sensor_data.merge(sensor_data_min, on='datetime [ISO8601]')
-        sensor_data = sensor_data.merge(sensor_data_max, on='datetime [ISO8601]')
+    # Merge the data
+    sensor_data = sensor_data.merge(sensor_data_min[['datetime [ISO8601]', 'waterlevel_quality_controlled [m]']], on='datetime [ISO8601]')
+    sensor_data = sensor_data.merge(sensor_data_max[['datetime [ISO8601]', 'waterlevel_quality_controlled [m]']], on='datetime [ISO8601]')
 
-        # Rename columns
-        sensor_data.columns = ['NOS ID', 'datetime', 'mean', 'min', 'max']
+    # Rename columns
+    sensor_data.columns = ['NOS ID', 'datetime', 'mean', 'min', 'max']
 
-        # Plotting min, mean, and max
-        fig, ax = plt.subplots(figsize=(10, 6))
-        ax.plot(sensor_data['datetime'], sensor_data['min'], label='Min')
-        ax.plot(sensor_data['datetime'], sensor_data['mean'], label='Mean')
-        ax.plot(sensor_data['datetime'], sensor_data['max'], label='Max')
-        ax.set_xlabel('Date')
-        ax.set_ylabel('Water Level (m)')
-        ax.set_title(f'Tide Sensor {sensor}')
-        ax.legend()
-        plt.show()
+    # Plotting min, mean, and max
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(sensor_data['datetime'], sensor_data['min'], label='Min')
+    ax.plot(sensor_data['datetime'], sensor_data['mean'], label='Mean')
+    ax.plot(sensor_data['datetime'], sensor_data['max'], label='Max')
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Water Level (m)')
+    ax.set_title(f'Tide Sensor {sensor}')
+    ax.legend()
+
+    # Save the plot as an image file
+    fig.savefig('./plots/plot_' + str(sensor) + '.png')
+    
+    plt.show()
 
 
     return None
