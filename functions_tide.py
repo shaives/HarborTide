@@ -103,7 +103,8 @@ def data_import_tidel_sensors():
 
         if len(csv_header) == 0:
             # Retrieving the header for csv
-            csv_header = sensor_information_file[-1].removeprefix('// ').split(',')
+            csv_header = sensor_information_file[-1].removeprefix('// ').removesuffix('\n').split(',')
+            csv_header = [item.strip() for item in csv_header]
 
         # Getting metadata for the sensor
         for line in sensor_information_file[:-4]:
@@ -114,10 +115,10 @@ def data_import_tidel_sensors():
                 sensor_information_dict[name].append(value)
             else :
                 sensor_information_dict[name] = [value]
-
+        
         sensor_data_df_temp = pd.read_csv('./data/tide_sensors/' + file, skiprows=10, sep='\t', header=None, usecols=[0,1])
-        sensor_data_df_temp.columns = csv_header[0:1]
-        sensor_data_df_temp['NOS ID'] = sensor_information_dict.get('NOS ID')[idx]
+        sensor_data_df_temp.columns = csv_header[:2]
+        sensor_data_df_temp['NOS ID'] = int(sensor_information_dict.get('NOS ID')[idx])
         sensor_data_df_temp['datetime [ISO8601]'] = pd.to_datetime(sensor_data_df_temp['datetime [ISO8601]'], format='ISO8601')
         sensor_data_df = pd.concat([sensor_data_df, sensor_data_df_temp])
 
@@ -127,7 +128,7 @@ def data_import_tidel_sensors():
     sensor_information_df = sensor_information_df.assign(geoPoint = list(zip(sensor_information_df.Latitude.astype('float64'), sensor_information_df.Longitude.astype('float64'))))
     sensor_information_df.drop(columns = ['Latitude', 'Longitude'], inplace =  True)
 
-    return sensor_information_df, sensor_data_df
+    return sensor_information_df, sensor_data_df  
 
 
 def curate_tide_sensor_data(tide_sensor_df):
