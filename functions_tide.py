@@ -148,9 +148,9 @@ def curate_tide_sensor_data(tide_sensor_df):
     tide_sensors = tide_sensor_df['NOS ID'].unique()
 
     # Group by NOS ID and month
-    curated_tide_sensor_mean_df = tide_sensor_df.groupby(['NOS ID', pd.Grouper(key='datetime [ISO8601]', freq='M')])['waterlevel_quality_controlled [m]'].mean()
-    curated_tide_sensor_min_df = tide_sensor_df.groupby(['NOS ID', pd.Grouper(key='datetime [ISO8601]', freq='M')])['waterlevel_quality_controlled [m]'].min()
-    curated_tide_sensor_max_df = tide_sensor_df.groupby(['NOS ID', pd.Grouper(key='datetime [ISO8601]', freq='M')])['waterlevel_quality_controlled [m]'].max()
+    curated_tide_sensor_mean_df = tide_sensor_df.groupby(['NOS ID', pd.Grouper(key='datetime [ISO8601]', freq='W')])['waterlevel_quality_controlled [m]'].mean()
+    curated_tide_sensor_min_df = tide_sensor_df.groupby(['NOS ID', pd.Grouper(key='datetime [ISO8601]', freq='W')])['waterlevel_quality_controlled [m]'].min()
+    curated_tide_sensor_max_df = tide_sensor_df.groupby(['NOS ID', pd.Grouper(key='datetime [ISO8601]', freq='W')])['waterlevel_quality_controlled [m]'].max()
 
     # Reset index
     curated_tide_sensor_mean_df = curated_tide_sensor_mean_df.reset_index()
@@ -181,9 +181,9 @@ def curate_tide_sensor_data(tide_sensor_df):
         ax.plot(sensor_data['datetime'], sensor_data['max'], label='Max')
 
         # Running average
-        sensor_data['ra_min'] = sensor_data['min'].rolling(window=12).mean()
-        sensor_data['ra_mean'] = sensor_data['mean'].rolling(window=12).mean()
-        sensor_data['ra_max'] = sensor_data['max'].rolling(window=12).mean()
+        sensor_data['ra_min'] = sensor_data['min'].rolling(window=52).mean()
+        sensor_data['ra_mean'] = sensor_data['mean'].rolling(window=52).mean()
+        sensor_data['ra_max'] = sensor_data['max'].rolling(window=52).mean()
 
         # Plotting running average
         ax.plot(sensor_data['datetime'], sensor_data['ra_min'], 'r', label='Running average min')
