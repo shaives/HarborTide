@@ -161,8 +161,11 @@ def curate_tide_sensor_data(tide_sensor_df):
     curated_tide_sensor_min_df = curated_tide_sensor_min_df.reset_index()
     curated_tide_sensor_max_df = curated_tide_sensor_max_df.reset_index()
 
+    # Save Base names for chosen sensors
+    # must become dynamic!
+    base_names_for_sensors = ['MCB Hawaii, Kaneohe Bay', 'VSTA San Diego', 'MCB Camp Pendleton', 'NAVSUPDET Monterey (NPS)', 'NAVSTA Everett, Washington']
 
-    for sensor in tide_sensors:
+    for idx, sensor in enumerate(tide_sensors):
 
         # Get the sensor data
         sensor_data = curated_tide_sensor_mean_df[curated_tide_sensor_mean_df['NOS ID'] == sensor]
@@ -197,8 +200,8 @@ def curate_tide_sensor_data(tide_sensor_df):
         # Set labels and title
         ax.set_xlabel('Date')
         ax.set_ylabel('Water Level (m)')
-        ax.set_title(f'Tide Sensor {sensor}')
-        ax.legend()
+        ax.set_title(f'Tide Sensor {sensor} - {base_names_for_sensors[idx]}')
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
 
         # Save the plot as an image file
         fig.savefig('./plots/plot_' + str(sensor) + '.png')
@@ -214,6 +217,7 @@ def create_map(bases_df, sensors_df):
 
             Parameters:
                         Bases (DataFrame): Contains all US Bases that we want to see in the Map
+                        Sensors (DataFrame): Contains all Sensors that we want to see in the Map
 
             Returns:
                         None: 
