@@ -1,19 +1,5 @@
 # HarborTide
 
-Project group for Comp II.
-
-Weblinks to resources:
-
-https://www.ncei.noaa.gov/
-
-https://noaa.maps.arcgis.com/home/index.html
-
-https://www.societyforscience.org/research-at-home/large-data-sets/
-
-ChatGPT generated, youre welcome to edit and make sense of it!
-
-# HarborTide
-
 HarborTide is a project aimed at measuring tide data and analyzing its development over the years, particularly focusing on its impact on military installations along coastal lines. The project integrates data collection, analysis, and visualization to provide insights into the changing tide patterns and their implications for coastal military infrastructure.
 
 ## Objective
@@ -48,3 +34,14 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Contact
 For inquiries or feedback, please contact [projectmaintainer@example.com](mailto:projectmaintainer@example.com).
 
+Project group for Comp II.
+
+Weblinks to resources:
+
+https://www.ncei.noaa.gov/
+
+https://noaa.maps.arcgis.com/home/index.html
+
+https://www.societyforscience.org/research-at-home/large-data-sets/
+
+ChatGPT generated, youre welcome to edit and make sense of it!
