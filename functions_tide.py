@@ -13,12 +13,12 @@
 import pandas as pd
 import os
 import gzip
+import requests
 
 import folium
 from folium.plugins import MarkerCluster
 
 import matplotlib.pyplot as plt
-
 
 
 def data_import_bases(states = ["Alaska", "Alabama", "Arkansas", "American Samoa", "Arizona", "California", "Colorado", "Connecticut", "District ", "of Columbia", "Delaware", "Florida", "Georgia", "Guam", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Puerto Rico", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Virgin Islands", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming"]):
@@ -56,8 +56,12 @@ def data_import_bases(states = ["Alaska", "Alabama", "Arkansas", "American Samoa
     bases_df.geoPoint = list(zip(bases_df.lat, bases_df.lon))
     bases_df.drop(columns = ['lat', 'lon'], inplace =  True)
 
-    # filter by list
+    # filter by list of states
     bases_df = bases_df[bases_df.state.isin(states)]
+
+    # get elevation for each location
+    # need to be improved with POST request
+    bases_df['elevation'] = bases_df['geoPoint'].apply(lambda point: get_elevation(point[0], point[1]))
 
     return bases_df
 
@@ -201,7 +205,6 @@ def curate_tide_sensor_data(tide_sensor_df):
         
         #plt.show()
 
-
     return None
 
 def create_map(bases_df, sensors_df):
@@ -259,3 +262,29 @@ def create_map(bases_df, sensors_df):
 
     # Save the map    
     map.save('horbourTide.html')
+
+
+def get_elevation(lat, lng):
+
+    """
+    Pulls elevation data from open-elevation.com
+
+            Parameters:
+                        lat (float): Latitude of location
+                        lng (float): Longitude of location
+
+            Returns:
+                        Altitude (float): ALtitute of location 
+    """
+    
+    # API request
+    url = f"https://api.open-elevation.com/api/v1/lookup?locations={lat},{lng}"
+    response = requests.get(url)
+    data = response.json()
+
+    # Check if data is available
+    if 'results' in data and data['results']:
+
+        return data['results'][0]['elevation']
+    
+    return None
