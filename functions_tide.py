@@ -93,12 +93,16 @@ def data_import_tidel_sensors():
                         https://www.ngdc.noaa.gov/hazard/tide/
 
     """
+
+    # Creating a dictionary to store the metadata and the data
     sensor_information_dict = dict()
     csv_header = list()
     sensor_data_df = pd.DataFrame()
 
+    # Looping through all the files in the directory
     for idx, file in enumerate(os.listdir('./data/tide_sensors/.')):
 
+        # Reading in the file
         with gzip.open('./data/tide_sensors/' + file, 'rt') as file_in:
             
             # Reading in header
@@ -119,6 +123,7 @@ def data_import_tidel_sensors():
             else :
                 sensor_information_dict[name] = [value]
         
+        # Reading in the data of the sensor
         sensor_data_df_temp = pd.read_csv('./data/tide_sensors/' + file, skiprows=10, sep='\t', header=None, usecols=[0,1])
         sensor_data_df_temp.columns = csv_header[:2]
         sensor_data_df_temp['NOS ID'] = int(sensor_information_dict.get('NOS ID')[idx])

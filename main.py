@@ -1,7 +1,7 @@
 # File: main.py
 # -*- coding: utf-8 -*-
 #
-# Authors:  Brenner, John
+# Authors:  Brener, John
 #           Stone,Thomas
 #           Urban, Conrad
 #
@@ -45,8 +45,6 @@
         Prints the person's name and age.
     """
 
-# import statements first
-
 # import files
 
 from functions_tide import *
@@ -59,22 +57,27 @@ def main():
             Parameters:
                         None
 
-            Returns:
-                        Hello World!
+            Output:
+                        map (png): A map of the US west coast with military bases and tide sensors
+                        plots (png): Plots of the tide sensor data
     """
     
     # dummy list of US states
-    #state_names = ["Alaska", "Alabama", "Arkansas", "American Samoa", "Arizona", "California", "Colorado", "Connecticut", "District ", "of Columbia", "Delaware", "Florida", "Georgia", "Guam", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Puerto Rico", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Virgin Islands", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming"]
+    # state_names = ["Alaska", "Alabama", "Arkansas", "American Samoa", "Arizona", "California", "Colorado", "Connecticut", "District ", "of Columbia", "Delaware", "Florida", "Georgia", "Guam", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Puerto Rico", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Virgin Islands", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming"]
 
-    #east_coast = ["Alabama", "Connecticut", "Delaware", "Florida", "Georgia", "Louisiana", "Massachusetts", "Maryland", "Maine", "Minnesota", "Mississippi", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New York", "Oklahoma", "Pennsylvania", "Puerto Rico", "Rhode Island", "South Carolina", "Texas", "Virginia", "Virgin Islands"]
+    # east_coast = ["Alabama", "Connecticut", "Delaware", "Florida", "Georgia", "Louisiana", "Massachusetts", "Maryland", "Maine", "Minnesota", "Mississippi", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New York", "Oklahoma", "Pennsylvania", "Puerto Rico", "Rhode Island", "South Carolina", "Texas", "Virginia", "Virgin Islands"]
     west_coast = ["Alaska", "California", "Guam", "Hawaii", "Oregon", "Washington"]
 
+    # import military bases
     bases_df = data_import_bases(west_coast)
 
+    # importing sensor information and data
     tide_sensors_df, tide_sensor_data_df = data_import_tidel_sensors()
 
-    tide_sensor_data_cleaned_df = curate_tide_sensor_data(tide_sensor_data_df)
+    # curating and processing the data and creating plots
+    curate_tide_sensor_data(tide_sensor_data_df)
 
+    # creating a map
     create_map(bases_df, tide_sensors_df)
 
 
