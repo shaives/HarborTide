@@ -97,10 +97,23 @@ def data_import_tidel_sensors():
     # Creating a dictionary to store the metadata and the data
     sensor_information_dict = dict()
     csv_header = list()
+    files_in_directory_gz = list()
     sensor_data_df = pd.DataFrame()
 
+    # Getting all the files in the directory
+    files_in_directory = os.listdir('./data/tide_sensors')
+
+    # Getting all the gz files
+    for file in files_in_directory:
+        
+        # Checking if the file is a gz file
+        if file.endswith('.gz'):
+            
+            # Appending the file to the list
+            files_in_directory_gz.append(file)
+
     # Looping through all the files in the directory
-    for idx, file in enumerate(os.listdir('./data/tide_sensors/.')):
+    for idx, file in enumerate(files_in_directory_gz):
 
         # Reading in the file
         with gzip.open('./data/tide_sensors/' + file, 'rt') as file_in:
