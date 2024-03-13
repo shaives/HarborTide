@@ -103,6 +103,9 @@ def data_import_tidel_sensors():
     # Getting all the files in the directory
     files_in_directory = os.listdir('./data/tide_sensors')
 
+    if len(files_in_directory) == 0:
+        raise ValueError('No files in the directory')
+
     # Getting all the gz files
     for file in files_in_directory:
         
