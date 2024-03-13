@@ -68,27 +68,24 @@ def data_import_bases(states = ["Alaska", "Alabama", "Arkansas", "American Samoa
 def data_import_tidel_sensors():
 
     """
-    Returns a dictonary with the information about the sensor and the data.
+    Returns DataFrames with the information about the sensor and the data.
 
             Parameters:
                         None
 
             Returns:
-                        sensors (dict): dictionary consisting out of:
+                        sensor_information_df (DataFrame): dataframe consisting out of:
 
-                            Info    (dict): Metadata of the Sensor
+                            e.g.
+                            NOS ID: 9410170
+                            Location Name: SAN DIEGO, SAN DIEGO BAY
+                            Latitude: 32.71419
+                            Longitude: -117.17358
+                            Horizontal Datum: WGS-84
+                            Operator: DOC>NOAA>NOS>CO-OPS
+                            Vertical Datum: Station Datum
 
-                                e.g.
-                                NOS ID: 9410170
-                                Location Name: SAN DIEGO, SAN DIEGO BAY
-                                Latitude: 32.71419
-                                Longitude: -117.17358
-                                Horizontal Datum: WGS-84
-                                Operator: DOC>NOAA>NOS>CO-OPS
-                                Vertical Datum: Station Datum
-
-                            Data    (dict): Data the sensor collected
-
+                        sensor_data_df (DataFrame): dataframe consisting of the sensor data
             Source:
                         https://www.ngdc.noaa.gov/hazard/tide/
 
