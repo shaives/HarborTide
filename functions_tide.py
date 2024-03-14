@@ -52,16 +52,15 @@ def data_import_bases(states = ["Alaska", "Alabama", "Arkansas", "American Samoa
     bases_df = bases_df[bases_df.status != 'Inactive']
 
     # convert geo points
-    bases_df[['lat', 'lon']] = bases_df.geoPoint.str.split(',', expand = True).astype('float64')
-    bases_df.geoPoint = list(zip(bases_df.lat, bases_df.lon))
-    bases_df.drop(columns = ['lat', 'lon'], inplace =  True)
+    bases_df[['latitude', 'longitude']] = bases_df['geoPoint'].str.split(',', expand = True).astype('float64')
+    bases_df['geoPoint'] = list(zip(bases_df['latitude'], bases_df['longitude']))
+    bases_df.drop(columns = ['latitude', 'longitude'], inplace =  True)
 
     # filter by list of states
     bases_df = bases_df[bases_df.state.isin(states)]
 
-    # get elevation for each location
-    # need to be improved with POST request
-    bases_df['elevation'] = bases_df['geoPoint'].apply(lambda point: get_elevation(point[0], point[1]))
+   # get elevation for each location    
+    bases_df['elevation'] = get_elevations(bases_df['geoPoint'])
 
     return bases_df
 
@@ -234,8 +233,8 @@ def create_map(bases_df, sensors_df):
     Creates a map with folium.
 
             Parameters:
-                        Bases (DataFrame): Contains all US Bases that we want to see in the Map
-                        Sensors (DataFrame): Contains all Sensors that we want to see in the Map
+                        bases_df (DataFrame): Contains all US Bases that we want to see in the Map
+                        sensors_df (DataFrame): Contains all Sensors that we want to see in the Map
 
             Returns:
                         None: 
@@ -286,7 +285,7 @@ def create_map(bases_df, sensors_df):
     map.save('horbourTide.html')
 
 
-def get_elevation(lat, lng):
+def get_elevations(bases_geo_df):
 
     """
     Pulls elevation data from open-elevation.com
@@ -298,15 +297,35 @@ def get_elevation(lat, lng):
             Returns:
                         Altitude (float): ALtitute of location 
     """
-    
-    # API request
-    url = f"https://api.open-elevation.com/api/v1/lookup?locations={lat},{lng}"
-    response = requests.get(url)
-    data = response.json()
+        
+    for lat, long in bases_geo_df['geoPoint'].values:    
 
-    # Check if data is available
-    if 'results' in data and data['results']:
+        location = (f"{lat},{long}")
+        
+        url = f"https://api.open-elevation.com/api/v1/lookup?locations={location}"
+        
+        try:
 
-        return data['results'][0]['elevation']
-    
-    return None
+            response = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
+            
+            if 'results' in data and data['results']:
+
+                elevation = data['results'][0]['elevation']
+                df = pd.DataFrame({'Location': (lat, long), 'Elevation': elevation})
+
+            else:
+
+                df = pd.DataFrame({'Location': (lat, long), 'Elevation': None})
+
+              
+        
+        except requests.exceptions.RequestException as e:
+
+            print(f"Error: {e}")
+
+            df = pd.DataFrame({'Location': (lat, long), 'Elevation': None})
+            
+        
+    return df
