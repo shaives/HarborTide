@@ -1,7 +1,7 @@
 # File: functions_tide.py
 # -*- coding: utf-8 -*-
 #
-# Authors:  Brenner, John
+# Authors:  Berner, John
 #           Stone,Thomas
 #           Urban, Conrad
 #
