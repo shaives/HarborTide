@@ -273,7 +273,7 @@ def create_map(bases_df, sensors_df):
         locations = coord_list_bases,
         popups = popups_bases,
         name='US Bases',
-        icon=folium.Icon('red')
+        icon=folium.Icon('red'),
         overlay=True,
         control=True
     )
@@ -282,7 +282,7 @@ def create_map(bases_df, sensors_df):
     marker_cluster_sensors = MarkerCluster(
         locations = coord_list_sensors,
         popups = popups_sensors,
-        icon=folium.Icon('blue')
+        icon=folium.Icon('blue'),
         name='Tide Sensors',
         overlay=True,
         control=True
