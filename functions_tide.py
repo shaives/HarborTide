@@ -21,6 +21,55 @@ from folium.plugins import MarkerCluster
 import matplotlib.pyplot as plt
 
 
+def get_elevations(bases_geo_df):
+
+    """
+    Pulls elevation data from open-elevation.com
+
+            Parameters:
+                        bases_geo_df (DataFrame): Latitude and Longitude of each base
+
+            Returns:
+                        elevations_df (DataFrame): location and elevation of each base 
+    """
+    
+    elevations = list()
+
+    for lat, long in bases_geo_df['geoPoint'].values:
+
+        location = (f"{lat},{long}")
+        
+        url = f"https://api.open-elevation.com/api/v1/lookup?locations={location}"
+        
+        try:
+
+            response = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
+            
+            if 'results' in data and data['results']:
+
+                elevation = data['results'][0]['elevation']
+                elevations.append(elevation)
+
+            else:
+
+                elevations.append(None)
+            
+        
+        except requests.exceptions.RequestException as e:
+
+            print(f"Error: {e}")
+
+            elevations.append(None)
+            
+    elevations_df = pd.DataFrame({'elevation': elevations})  
+
+    elevations_df = pd.concat([bases_geo_df, elevations_df], axis=1)
+
+    return elevations_df
+
+
 def data_import_bases(states = ["Alaska", "Alabama", "Arkansas", "American Samoa", "Arizona", "California", "Colorado", "Connecticut", "District of Columbia", "Delaware", "Florida", "Georgia", "Guam", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Puerto Rico", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Virgin Islands", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming"]):
 
     """
@@ -65,6 +114,7 @@ def data_import_bases(states = ["Alaska", "Alabama", "Arkansas", "American Samoa
     bases_df = get_elevations(bases_df)   
 
     return bases_df
+
 
 def data_import_tidel_sensors():
 
@@ -230,6 +280,7 @@ def curate_tide_sensor_data(tide_sensor_df):
 
     return None
 
+
 def create_map(bases_df, sensors_df):
 
     """
@@ -284,51 +335,3 @@ def create_map(bases_df, sensors_df):
     # Save the map    
     map.save('harborTide.html')
 
-
-def get_elevations(bases_geo_df):
-
-    """
-    Pulls elevation data from open-elevation.com
-
-            Parameters:
-                        bases_geo_df (DataFrame): Latitude and Longitude of each base
-
-            Returns:
-                        elevations_df (DataFrame): location and elevation of each base 
-    """
-    
-    elevations = list()
-
-    for lat, long in bases_geo_df['geoPoint'].values:
-
-        location = (f"{lat},{long}")
-        
-        url = f"https://api.open-elevation.com/api/v1/lookup?locations={location}"
-        
-        try:
-
-            response = requests.get(url)
-            response.raise_for_status()
-            data = response.json()
-            
-            if 'results' in data and data['results']:
-
-                elevation = data['results'][0]['elevation']
-                elevations.append(elevation)
-
-            else:
-
-                elevations.append(None)
-            
-        
-        except requests.exceptions.RequestException as e:
-
-            print(f"Error: {e}")
-
-            elevations.append(None)
-            
-    elevations_df = pd.DataFrame({'elevation': elevations})  
-
-    elevations_df = pd.concat([bases_geo_df, elevations_df], axis=1)
-
-    return elevations_df
