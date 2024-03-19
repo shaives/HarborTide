@@ -1,6 +1,6 @@
 # HarborTide
 
-HarborTide is a project aimed at measuring tide data and analyzing its development over the years, particularly focusing on its impact on military installations along coastal lines. The project integrates data collection, analysis, and visualization to provide insights into the changing tide patterns and their implications for coastal military infrastructure.
+HarborTide is a project aimed at measuring tide data and analyzing its development over time, particularly its impact along coastal military installations. The project integrates data collection, analysis, and visualization to provide insights into the changing tide level patterns and their implications for coastal military infrastructure.
 
 ## Objective
 The primary objective of HarborTide is to understand how tide data has evolved over time and its correlation with changes in coastal military installations. By examining historical tide data and combining it with geographic information data of military installations, the project aims to identify trends, patterns, and potential vulnerabilities associated with tidal fluctuations and increase.

@@ -6,7 +6,7 @@
 #           Urban, Conrad
 #
 # FinalProject Comp Methods II
-# Project group: HarboTide
+# Project group: HarborTide
 
 # import statements first
 
@@ -21,13 +21,13 @@ from folium.plugins import MarkerCluster
 import matplotlib.pyplot as plt
 
 
-def data_import_bases(states = ["Alaska", "Alabama", "Arkansas", "American Samoa", "Arizona", "California", "Colorado", "Connecticut", "District ", "of Columbia", "Delaware", "Florida", "Georgia", "Guam", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Puerto Rico", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Virgin Islands", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming"]):
+def data_import_bases(states = ["Alaska", "Alabama", "Arkansas", "American Samoa", "Arizona", "California", "Colorado", "Connecticut", "District of Columbia", "Delaware", "Florida", "Georgia", "Guam", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Puerto Rico", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Virgin Islands", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming"]):
 
     """
     Returns a cleaned dataframe with all the military installations.
 
             Parameters:
-                        states (list): list of states you want to see bases off
+                        states (list): list of states whose bases you want to see
 
             Data:
                         https://public.opendatasoft.com/explore/dataset/military-bases/export/?dataChart=eyJxdWVyaWVzIjpbeyJjb25maWciOnsiZGF0YXNldCI6Im1pbGl0YXJ5LWJhc2VzIiwib3B0aW9ucyI6e319LCJjaGFydHMiOlt7ImFsaWduTW9udGgiOnRydWUsInR5cGUiOiJjb2x1bW4iLCJmdW5jIjoiQVZHIiwieUF4aXMiOiJvYmplY3RpZF8xIiwic2NpZW50aWZpY0Rpc3BsYXkiOnRydWUsImNvbG9yIjoiI0ZGNTE1QSJ9XSwieEF4aXMiOiJjb21wb25lbnQiLCJtYXhwb2ludHMiOjUwLCJzb3J0IjoiIn1dLCJ0aW1lc2NhbGUiOiIiLCJkaXNwbGF5TGVnZW5kIjp0cnVlLCJhbGlnbk1vbnRoIjp0cnVlfQ%3D%3D&location=6,37.78808,-111.09375&basemap=jawg.light
@@ -39,16 +39,16 @@ def data_import_bases(states = ["Alaska", "Alabama", "Arkansas", "American Samoa
     # Choose columns we need
     data_columns = ['Geo Point', 'COMPONENT', 'Site Name', 'State Terr', 'Oper Stat']
 
-    # read in alle the military bases - seperator ';'
+    # read in all of the military bases - seperator ';'
     bases_df = pd.read_csv('./data/military-bases.csv', sep=';', usecols = data_columns )
 
     # rename columns for easier use
     bases_df.rename(columns={'Geo Point': 'geoPoint', 'COMPONENT': "component", 'Site Name': 'name', 'State Terr': 'state', 'Oper Stat': 'status'}, inplace = True)
 
-    # checking it there is only Active and Inaktive
+    # checking that there is only Active and Inactive
     #bases_df[(bases_df.status != 'Active') & (bases_df.status != 'Inactive')]
 
-    # drop all Inaktive bases
+    # drop all Inactive bases
     bases_df = bases_df[bases_df.status != 'Inactive']
 
     # convert geo points
@@ -75,7 +75,7 @@ def data_import_tidel_sensors():
                         None
 
             Returns:
-                        sensor_information_df (DataFrame): dataframe consisting out of:
+                        sensor_information_df (DataFrame): dataframe consisting of:
 
                             e.g.
                             NOS ID: 9410170
@@ -156,7 +156,7 @@ def data_import_tidel_sensors():
 def curate_tide_sensor_data(tide_sensor_df):
 
     """
-    Curates the tide sonsor data.
+    Curates the tide sensor data.
 
             Parameters:
                         tide_sensor_df (DataFrame): Contains all read in tide sensors
@@ -165,8 +165,9 @@ def curate_tide_sensor_data(tide_sensor_df):
                         curated_tide_sensor_df 
     """
 
-    # Remove all rows with 9999
+    # Remove all rows with '9999'
     tide_sensor_df = tide_sensor_df[tide_sensor_df['waterlevel_quality_controlled [m]'] != 9999]
+
     # find unique sensors IDs
     tide_sensors = tide_sensor_df['NOS ID'].unique()
 
@@ -281,7 +282,7 @@ def create_map(bases_df, sensors_df):
     folium.LayerControl().add_to(map)
 
     # Save the map    
-    map.save('horbourTide.html')
+    map.save('harborTide.html')
 
 
 def get_elevations(bases_geo_df):
