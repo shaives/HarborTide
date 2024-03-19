@@ -252,31 +252,28 @@ def create_map(bases_df, sensors_df):
     map = folium.Map(location=[nps_lat, nps_lon], zoom_start = 4, control_scal = True, tiles = "Cartodb Positron")
 
     # Add a marker for Glasgow Hall
-    coord_list_bases = bases_df.geoPoint
-    cod_list_sensors = sensors_df.geoPoint
+    coord_list_bases = bases_df['geoPoint']
+    coord_list_sensors = sensors_df['geoPoint']
+
+    # Create a MarkerCluster object for bases & sensors
+    marker_cluster_bases = MarkerCluster(name='US Bases').add_to(map)
+    marker_cluster_sensors = MarkerCluster(name='Tidal Sensors').add_to(map)
 
     # Create popups
     popups_bases = ['<b>Base:</b><br>{}<br><b>Altitude:</b><br>{}'.format(name, elevation) for (name, elevation) in bases_df[['name', 'elevation']].values]
     popups_sensors = ['<b>Name:</b><br>{}'.format(name) for (name) in sensors_df['Location Name'].values]
 
-    # Create a MarkerCluster object for bases
-    marker_cluster_bases = MarkerCluster(
-        locations = coord_list_bases,
-        popups = popups_bases,
-        name='US Bases',
-        color_column='green',
-        overlay=True,
-        control=True
-    )
-
-    # Create a MarkerCluster object for sensors
-    marker_cluster_sensors = MarkerCluster(
-        locations = cod_list_sensors,
-        popups = popups_sensors,
-        name='Tide Sensors',
-        overlay=True,
-        control=True
-    )
+    # Add markers to the MarkerCluster bases
+    for coord, popup in zip(coord_list_bases, popups_bases):
+        folium.Marker(location=coord, 
+                      popup=popup, 
+                      icon=folium.Icon('red')).add_to(marker_cluster_bases)
+        
+    # Add markers to the MarkerCluster sensors
+    for sensor, popup in zip(coord_list_sensors, popups_sensors):
+        folium.Marker(location=sensor, 
+                      popup=popup, 
+                      icon=folium.Icon('blue')).add_to(marker_cluster_sensors)
 
     # Add MarkerCluster to map
     marker_cluster_bases.add_to(map)
